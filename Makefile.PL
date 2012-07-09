@@ -16,9 +16,7 @@ my %WriteMakefileArgs = (
     "ExtUtils::MakeMaker" => "6.30"
   },
   "DISTNAME" => "TAP-Runner",
-  "EXE_FILES" => [
-    "bin/test.pl"
-  ],
+  "EXE_FILES" => [],
   "LICENSE" => "perl",
   "NAME" => "TAP::Runner",
   "PREREQ_PM" => {
@@ -26,9 +24,9 @@ my %WriteMakefileArgs = (
     "Moose" => 0,
     "TAP::Harness" => 0
   },
-  "VERSION" => "0.001",
+  "VERSION" => "0.002",
   "test" => {
-    "TESTS" => "t/*.t"
+    "TESTS" => "t/*.t t/examples/*.t"
   }
 );
 

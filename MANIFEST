@@ -1,11 +1,13 @@
+Changes
 LICENSE
 MANIFEST
 META.yml
 Makefile.PL
 README
-bin/test.pl
 dist.ini
+examples/test.pl
 lib/TAP/Runner.pm
+lib/TAP/Runner/Option.pm
 lib/TAP/Runner/Test.pm
-t/test.t
-t/test2.t
+t/examples/test.t
+t/release-pod-syntax.t
