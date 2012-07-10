@@ -1,4 +1,7 @@
 package TAP::Runner::Test;
+{
+  $TAP::Runner::Test::VERSION = '0.004';
+}
 # ABSTRACT: Runner test class
 use Moose;
 use Moose::Util::TypeConstraints;
@@ -123,17 +126,7 @@ no Moose;
 __PACKAGE__->meta->make_immutable;
 1;
 
-
-
-=pod
-
-=head1 NAME
-
-TAP::Runner::Test - Runner test class
-
-=head1 VERSION
-
-version 0.003
+__END__
 
 =head1 DESCRIPTION
 
@@ -162,20 +155,3 @@ Array of L<TAP::Runner::Option> used by test.
 =head2 harness_tests
 
 Array of hashes prepared for testing with L<TAP::Harness>
-
-=head1 AUTHOR
-
-Pavel R3VoLuT1OneR Zhytomirsky <r3volut1oner@gmail.com>
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2012 by Pavel R3VoLuT1OneR Zhytomirsky.
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
-
-=cut
-
-
-__END__
-

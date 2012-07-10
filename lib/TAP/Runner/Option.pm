@@ -1,4 +1,7 @@
 package TAP::Runner::Option;
+{
+  $TAP::Runner::Option::VERSION = '0.004';
+}
 # ABSTRACT: Option object
 use Moose;
 use Moose::Util::TypeConstraints;
@@ -19,7 +22,7 @@ has name          => (
 has values        => (
     is            => 'ro',
     isa           => 'ArrayRef',
-    lazy_build    => 1,
+    required      => 1,
 );
 
 has multiple      => (
@@ -40,17 +43,7 @@ no Moose;
 __PACKAGE__->meta->make_immutable;
 1;
 
-
-
-=pod
-
-=head1 NAME
-
-TAP::Runner::Option - Option object
-
-=head1 VERSION
-
-version 0.003
+__END__
 
 =head1 DESCRIPTION
 
@@ -83,20 +76,3 @@ For option { name => '--opt_exampl', values => [ 1, 2 ], multiple => 1 }
 will run to tests, with diferrent optoins:
 t/test.t --opt_exampl 1
 t/test.t --opt_exampl 2
-
-=head1 AUTHOR
-
-Pavel R3VoLuT1OneR Zhytomirsky <r3volut1oner@gmail.com>
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2012 by Pavel R3VoLuT1OneR Zhytomirsky.
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
-
-=cut
-
-
-__END__
-

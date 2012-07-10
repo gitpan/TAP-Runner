@@ -1,4 +1,7 @@
 package TAP::Runner;
+{
+  $TAP::Runner::VERSION = '0.004';
+}
 # ABSTRACT: Running tests with options
 use Moose;
 use Carp;
@@ -7,7 +10,8 @@ use TAP::Runner::Test;
 has harness_class => (
     is            => 'rw',
     isa           => 'Str',
-    default       => 'TAP::Harness',);
+    default       => 'TAP::Harness',
+);
 
 has harness_formatter => (
     is            => 'rw',
@@ -70,17 +74,7 @@ no Moose;
 __PACKAGE__->meta->make_immutable;
 1;
 
-
-
-=pod
-
-=head1 NAME
-
-TAP::Runner - Running tests with options
-
-=head1 VERSION
-
-version 0.003
+__END__
 
 =head1 SYNOPSIS
 
@@ -131,14 +125,14 @@ version 0.003
                     ],
                 },
                 {
-                    file    => 't/examples/test2.t',
+                    file    => 't/examples/test.t',
                     alias   => 'Test alias 2',
                     args    => [
                         '--option', 'option_value_1'
                     ],
                 },
                 {
-                    file    => 't/examples/test2.t',
+                    file    => 't/examples/test.t',
                     alias   => 'Test alias 22',
                     args    => [
                         '--option', 'option_value_2'
@@ -147,6 +141,7 @@ version 0.003
             ],
         }
     )->run;
+
 
 =head1 DESCRIPTION
 
@@ -187,20 +182,4 @@ More arguments that can be provided to harness object
 =head2 tests
 
 Test configuration to run
-
-=head1 AUTHOR
-
-Pavel R3VoLuT1OneR Zhytomirsky <r3volut1oner@gmail.com>
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is copyright (c) 2012 by Pavel R3VoLuT1OneR Zhytomirsky.
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
-
-=cut
-
-
-__END__
 
