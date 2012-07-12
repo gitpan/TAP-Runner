@@ -1,11 +1,13 @@
 package TAP::Runner;
 {
-  $TAP::Runner::VERSION = '0.004';
+  $TAP::Runner::VERSION = '0.005';
 }
 # ABSTRACT: Running tests with options
 use Moose;
 use Carp;
 use TAP::Runner::Test;
+
+
 
 has harness_class => (
     is            => 'rw',
@@ -13,10 +15,12 @@ has harness_class => (
     default       => 'TAP::Harness',
 );
 
+
 has harness_formatter => (
     is            => 'rw',
     predicate     => 'has_custom_formatter',
 );
+
 
 has harness_args  => (
     is            => 'rw',
@@ -24,12 +28,15 @@ has harness_args  => (
     default       => sub{ {} },
 );
 
+
 has tests         => (
     is            => 'rw',
     isa           => 'ArrayRef::TAP::Runner::Test',
     coerce        => 1,
-    required      => 1,
 );
+
+
+
 
 sub run {
     my $self          = shift;
@@ -38,7 +45,7 @@ sub run {
     my @harness_tests = $self->_get_harness_tests;
 
     # Load harness class
-    eval "require $harness_class";
+    eval "use $harness_class";
     croak "Can't load $harness_class" if $@;
 
     my $harness = $harness_class->new( $harness_args );
@@ -52,13 +59,26 @@ sub run {
 
 # Harness args with building test arguments
 sub _get_harness_args {
-    my $self      = shift;
+    my $self  = shift;
+
+    # Build parallel runing test rules
+    my @rules = (
+        map { $_->get_parallel_rules } @{ $self->tests },
+        exists $self->harness_args->{rules}->{par} ?
+            @{ $self->harness_args->{rules}->{par} } : ()
+    );
+
+    # Set correct jobs counter if jobs not set
+    $self->harness_args->{jobs} = int @rules
+        if ( @rules and not exists $self->harness_args->{jobs} );
 
     # Build tests args hash ref
-    $self->harness_args->{test_args} = {
+    my %test_args =
         map { ( $_->{alias}, $_->{args} ) }
-        map { @{ $_->harness_tests }      } @{ $self->tests } };
+        map { @{ $_->harness_tests }      } @{ $self->tests };
 
+    $self->harness_args->{rules} = { par => \@rules } if @rules;
+    $self->harness_args->{test_args} = \%test_args;
     $self->harness_args;
 }
 
@@ -74,7 +94,17 @@ no Moose;
 __PACKAGE__->meta->make_immutable;
 1;
 
-__END__
+
+
+=pod
+
+=head1 NAME
+
+TAP::Runner - Running tests with options
+
+=head1 VERSION
+
+version 0.005
 
 =head1 SYNOPSIS
 
@@ -88,16 +118,7 @@ __END__
     TAP::Runner->new(
         {
             # harness_class => 'TAP::Harness::JUnit',
-            # harness_formatter => TAP::Formatter::HTML->new,
-            harness_args => {
-                rules => {
-                    par => [
-                        { seq => qr/^Test alias 2.*$/  },
-                        { seq => '*' },
-                    ],
-                },
-                jobs  => 4,
-            },
+            harness_formatter => TAP::Formatter::HTML->new,
             tests => [
                 {
                     file    => 't/examples/test.t',
@@ -107,7 +128,7 @@ __END__
                     ],
                     options => [
                         {
-                            name   => '--server',
+                            name   => '--website',
                             values => [
                                 'first.local',
                                 'second.local',
@@ -121,6 +142,7 @@ __END__
                                 'chrome',
                             ],
                             multiple => 1,
+                            parallel => 1,
                         },
                     ],
                 },
@@ -131,21 +153,31 @@ __END__
                         '--option', 'option_value_1'
                     ],
                 },
-                {
-                    file    => 't/examples/test.t',
-                    alias   => 'Test alias 22',
-                    args    => [
-                        '--option', 'option_value_2'
-                    ],
-                },
             ],
         }
     )->run;
 
-
 =head1 DESCRIPTION
 
 This module allows to run tests more flexible. Allows to use TAP::Harness, not just for unit tests.
+
+=head1 ATTRIBUTES
+
+=head2 harness_class
+
+Harness class to run the tests ( default L<TAP::Harness> )
+
+=head2 harness_formatter
+
+Custom formatter for Harness.
+
+=head2 harness_args HashRef
+
+Default args that will pass to Harness object
+
+=head2 tests ArrayRef[TAP::Runner::Test]
+
+Tests configs that should run. See L<TAP::Runner::Test>
 
 =head1 METHODS
 
@@ -163,23 +195,20 @@ Create a new L<TAP::Runner> object. tests atribute required
 
 =head2 run
 
-Run all the tests
+Run the tests
 
-=head1 ATTRIBUTES
+=head1 AUTHOR
 
-=head2 harness_class
+Pavel R3VoLuT1OneR Zhytomirsky <r3volut1oner@gmail.com>
 
-Harness class to use for run tests
+=head1 COPYRIGHT AND LICENSE
 
-=head2 harness_formatter
+This software is copyright (c) 2012 by Pavel R3VoLuT1OneR Zhytomirsky.
 
-Custom harness formatter
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
-=head2 harness_args
+=cut
 
-More arguments that can be provided to harness object
 
-=head2 tests
-
-Test configuration to run
-
+__END__

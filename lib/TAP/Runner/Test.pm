@@ -1,15 +1,12 @@
 package TAP::Runner::Test;
 {
-  $TAP::Runner::Test::VERSION = '0.004';
+  $TAP::Runner::Test::VERSION = '0.005';
 }
 # ABSTRACT: Runner test class
 use Moose;
 use Moose::Util::TypeConstraints;
-
 use TAP::Runner::Option;
-
-# Use cartesian multiplication
-use Math::Cartesian::Product;
+use Math::Cartesian::Product; # Used for cartesian multiplication
 
 subtype 'ArrayRef::' . __PACKAGE__,
     as 'ArrayRef[' . __PACKAGE__ . ']';
@@ -48,6 +45,24 @@ has harness_tests => (
     isa           => 'ArrayRef[HashRef]',
     lazy_build    => 1,
 );
+
+
+sub get_parallel_rules {
+    my $self             = shift;
+    my @rules            = ();
+    my @parallel_options =
+        grep { $_->multiple && $_->parallel } @{ $self->options };
+
+    foreach my $option ( @parallel_options ) {
+        my $test_alias  = $self->alias;
+        my $option_name = $option->name;
+
+        push @rules, { seq => qr/$test_alias.*$option_name $_.*$/ }
+            foreach @{ $option->values };
+    }
+
+    ( @rules );
+};
 
 # Build alias if it not defined
 sub _build_alias {
@@ -126,32 +141,70 @@ no Moose;
 __PACKAGE__->meta->make_immutable;
 1;
 
-__END__
+
+
+=pod
+
+=head1 NAME
+
+TAP::Runner::Test - Runner test class
+
+=head1 VERSION
+
+version 0.005
 
 =head1 DESCRIPTION
 
 Test object used by L<TAP::Runner>
 
-=head1 METHODS
+=head1 MOOSE SUBTYPES
+
+=head2 ArrayRef::TAP::Runner::Test
+
+Coerce ArrayRef[HashRef] to ArrayRef[TAP::Runner::Option] Used by L<TAP::Runner>
 
 =head1 ATTRIBUTES
 
-=head2 file
+=head2 file Str
 
 Test file to run ( required )
 
-=head2 alias
+=head2 alias Str
 
 Alias for tests ( by default used file name )
 
-=head2 args
+=head2 args ArrayRef
 
 Arguments that will pass to all the tests
 
-=head2 options
+=head2 options ArrayRef[TAP::Runner::Option]
 
 Array of L<TAP::Runner::Option> used by test.
 
-=head2 harness_tests
+=head2 harness_tests ArrayRef[HashRef]
 
 Array of hashes prepared for testing with L<TAP::Harness>
+
+HashRef -> { file: file.t, alias: 'Test alias', args: [] }
+
+=head1 METHODS
+
+=head2 get_parallel_rules
+
+Rules for run tests in parallel
+
+=head1 AUTHOR
+
+Pavel R3VoLuT1OneR Zhytomirsky <r3volut1oner@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Pavel R3VoLuT1OneR Zhytomirsky.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
+
+__END__

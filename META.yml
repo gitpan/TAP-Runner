@@ -12,6 +12,9 @@ meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
 name: TAP-Runner
+no_index:
+  file:
+    - README.pod
 requires:
   Math::Cartesian::Product: 0
   Moose: 0
@@ -19,4 +22,4 @@ requires:
 resources:
   bugtracker: http://github.com/R3VoLuT1OneR/TAP-Runner/issues
   repository: http://github.com/R3VoLuT1OneR/TAP-Runner
-version: 0.004
+version: 0.005

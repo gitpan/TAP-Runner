@@ -24,7 +24,7 @@ my %WriteMakefileArgs = (
     "Moose" => 0,
     "TAP::Harness" => 0
   },
-  "VERSION" => "0.004",
+  "VERSION" => "0.005",
   "test" => {
     "TESTS" => "t/*.t t/examples/*.t"
   }
